@@ -69,12 +69,142 @@ public func dataFromFile(_ filename: String) -> Data? {
 }
 
 
+enum ProfileViewModelItemType {
+    case nameAndPicture
+    case about
+    case email
+    case friend
+    case attribute
+}
 
+protocol ProfileViewModelItem {
+    var type: ProfileViewModelItemType { get }
+    var rowCount: Int { get }
+    var sectionTitle: String { get }
+}
 
+extension ProfileViewModelItem {
+    var rowCount: Int {
+        return 1
+    }
+}
 
+class ProfileViewModelNameItem: ProfileViewModelItem {
+    var type: ProfileViewModelItemType {
+        return .nameAndPicture
+    }
+    
+    var sectionTitle: String {
+        return "Main Info"
+    }
+}
 
+class ProfileViewModelNameAndPictureItem: ProfileViewModelItem {
+    var type: ProfileViewModelItemType {
+        return .nameAndPicture
+    }
+    
+    var sectionTitle: String {
+        return "Main Info"
+    }
+    
+    var pictureUrl: String
+    var userName: String
+    
+    init( pictureUrl: String, userName: String ) {
+        self.pictureUrl = pictureUrl
+        self.userName = userName
+    }
+}
 
+class ProfileViewModelAboutItem: ProfileViewModelItem {
+    var type: ProfileViewModelItemType {
+        return .about
+    }
+    
+    var sectionTitle: String {
+        return "About"
+    }
+    
+    var about: String
+    
+    init( about: String ) {
+        self.about = about
+    }
+}
 
+class ProfileViewModelEmailItem: ProfileViewModelItem {
+    var type: ProfileViewModelItemType {
+        return .email
+    }
+    
+    var sectionTitle: String {
+        return "Email"
+    }
+    
+    var email: String
+    
+    init( email: String ){
+        self.email = email
+    }
+}
+
+class ProfileViewModelAttributeItem: ProfileViewModelItem {
+    var type: ProfileViewModelItemType {
+        return .attribute
+    }
+    
+    var sectionTitle: String {
+        return "Attributes"
+    }
+    
+    var rowCount: Int {
+        return attributes.count
+    }
+    
+    var attributes: [Attribute]
+    
+    init( attributes: [Attribute] ) {
+        self.attributes = attributes
+    }
+}
+
+class ProfileViewModelFriendsItem: ProfileViewModelItem {
+    var type: ProfileViewModelItemType {
+        return .friend
+    }
+    
+    var sectionTitle: String {
+        return "Friends"
+    }
+    
+    var rowCount: Int {
+        return friends.count
+    }
+    
+    var friends: [Friend]
+    
+    init( friends: [Friend] ) {
+        self.friends = friends
+    }
+}
+
+class ProfileViewModel: NSObject {
+    var items = [ProfileViewModelItem]()
+    
+    override init( profile: Profile ) {
+        super.init()
+        guard let data = dataFromFile( "ServerData" ), let profile = Profile( data: data ) else {
+            return
+        }
+        
+        // initialization code will go here
+        
+        if let name = profile.fullName, let pictureUrl = profile.pictureUrl {
+            let nameAndPictureItem = ProfileViewModelNameAndPictureItem( pictureUrl: pictureUrl, name: name )
+        }
+    }
+}
 
 
 
